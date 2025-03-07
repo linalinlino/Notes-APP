@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            width: 450px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .note-input {
+            width: calc(100% - 20px);
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .add-btn {
+            width: 100%;
+            padding: 12px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .add-btn:hover {
+            background: #45a049;
+        }
+        .notes-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+        .note-item {
+            background: #f9f9f9;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .delete-btn {
+            background: #ff5252;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .delete-btn:hover {
+            background: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📝 Notes App</h2>
+        <input type="text" class="note-input" placeholder="Enter your note...">
+        <button class="add-btn">Add Note</button>
+        <ul class="notes-list"></ul>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const input = document.querySelector(".note-input");
+            const addBtn = document.querySelector(".add-btn");
+            const notesList = document.querySelector(".notes-list");
+            let notes = JSON.parse(localStorage.getItem("notes")) || [];
+            
+            const renderNotes = () => {
+                notesList.innerHTML = "";
+                notes.forEach((note, index) => {
+                    const li = document.createElement("li");
+                    li.classList.add("note-item");
+                    li.innerHTML = `${note} <button class='delete-btn' data-index='${index}'><i class='fas fa-trash'></i></button>`;
+                    notesList.appendChild(li);
+                });
+                localStorage.setItem("notes", JSON.stringify(notes));
+            };
+            
+            addBtn.addEventListener("click", () => {
+                const noteText = input.value.trim();
+                if (noteText) {
+                    notes.push(noteText);
+                    input.value = "";
+                    renderNotes();
+                }
+            });
+            
+            notesList.addEventListener("click", (e) => {
+                if (e.target.closest(".delete-btn")) {
+                    const index = e.target.closest(".delete-btn").dataset.index;
+                    notes.splice(index, 1);
+                    renderNotes();
+                }
+            });
+            
+            renderNotes();
+        });
+    </script>
+</body>
+</html>
